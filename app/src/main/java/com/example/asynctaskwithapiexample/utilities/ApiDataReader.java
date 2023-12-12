@@ -3,6 +3,7 @@ package com.example.asynctaskwithapiexample.utilities;
 import com.example.asynctaskwithapiexample.parsers.FloatRatesXmlParser;
 import com.example.asynctaskwithapiexample.parsers.GunfireHtmlParser;
 import com.example.asynctaskwithapiexample.parsers.MeteoLtJsonParser;
+import com.example.asynctaskwithapiexample.parsers.NamesJsonParser;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,27 +12,18 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.asynctaskwithapiexample.utilities.Constants.FLOATRATES_API_URL;
-import static com.example.asynctaskwithapiexample.utilities.Constants.GUNFIRE_URL;
-import static com.example.asynctaskwithapiexample.utilities.Constants.METEOLT_API_URL;
+
+import static com.example.asynctaskwithapiexample.utilities.Constants.NAMES_URL;
 
 public class ApiDataReader {
-    public static String getValuesFromApi(String apiCode) throws IOException {
+    public static ArrayList<String> getValuesFromApi(String apiCode) throws IOException {
         InputStream apiContentStream = null;
-        String result = "";
+        ArrayList<String> resultList = new ArrayList<>();
         try {
             switch (apiCode) {
-                case METEOLT_API_URL:
-                    apiContentStream = downloadUrlContent(METEOLT_API_URL);
-                    result = MeteoLtJsonParser.getKaunasWeatherForecast(apiContentStream);
-                    break;
-                case FLOATRATES_API_URL:
-                    apiContentStream = downloadUrlContent(FLOATRATES_API_URL);
-                    result = FloatRatesXmlParser.getCurrencyRatesBaseUsd(apiContentStream);
-                    break;
-                case GUNFIRE_URL:
-                    apiContentStream = downloadUrlContent(GUNFIRE_URL);
-                    result = GunfireHtmlParser.getAmountAndDiscountFromGunfire(apiContentStream);
+                case NAMES_URL:
+                    apiContentStream = downloadUrlContent(NAMES_URL);
+                    resultList = NamesJsonParser.getNamesInfo(apiContentStream);
                     break;
                 default:
             }
@@ -41,7 +33,7 @@ public class ApiDataReader {
                 apiContentStream.close();
             }
         }
-        return result;
+        return resultList;
     }
 
     //Routine that creates and calls GET request to web page

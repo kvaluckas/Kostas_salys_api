@@ -1,6 +1,7 @@
 package com.example.asynctaskwithapiexample;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.media3.common.util.Log;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -8,6 +9,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Switch;
@@ -27,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView tvStatus;
     private ArrayAdapter listAdapter;
     private Switch swUseAsyncTask;
+    private EditText filterName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,13 +39,17 @@ public class MainActivity extends AppCompatActivity {
         this.lvItems = findViewById(R.id.lv_items);
         this.tvStatus = findViewById(R.id.tv_status);
         this.swUseAsyncTask = findViewById(R.id.sw_use_async_task);
-
+        this.filterName = findViewById(R.id.filter_name);
         this.listAdapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1, new ArrayList<>());
         this.lvItems.setAdapter(this.listAdapter);
     }
 
     public void onBtnGetDataClick(View view) {
         this.tvStatus.setText(R.string.loading_data);
+        String nameFilter = filterName.getText().toString();
+
+
+
         if(this.swUseAsyncTask.isChecked()){
             getDataByAsyncTask();
             Toast.makeText(this, R.string.msg_using_async_task, Toast.LENGTH_LONG).show();
@@ -56,12 +63,11 @@ public class MainActivity extends AppCompatActivity {
     public void getDataByAsyncTask(){
         new AsyncDataLoader() {
             @Override
-            public void onPostExecute(String result) {
+            public void onPostExecute(ArrayList<String> result) {
                 tvStatus.setText(getString(R.string.data_loaded) + result);
             }
-        //}.execute(Constants.GUNFIRE_URL);
-        //}.execute(Constants.FLOATRATES_API_URL);
-        }.execute(Constants.METEOLT_API_URL);
+
+        }.execute(Constants.NAMES_URL);
     }
 
     public void getDataByThread() {
@@ -70,8 +76,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 try {
-                    final String result = ApiDataReader.getValuesFromApi(Constants.FLOATRATES_API_URL);
-                    //final String result = ApiDataReader.getValuesFromApi(Constants.METEOLT_API_URL);
+                    final ArrayList<String> result = ApiDataReader.getValuesFromApi(Constants.NAMES_URL);
                     Runnable updateUIRunnable = new Runnable() {
                         @Override
                         public void run() {
@@ -88,14 +93,6 @@ public class MainActivity extends AppCompatActivity {
         Thread thread = new Thread(getDataAndDisplayRunnable);
         thread.start();
 
-        //with Lambdas --->
-        //        new Thread(() -> {
-        //            try {
-        //                final String result = ApiDataReader.getValuesFromApi(Constants.FLOATRATES_API_URL);
-        //                runOnUiThread(() -> tvStatus.setText(getString(R.string.data_loaded) + result));
-        //            } catch (IOException ex) {
-        //                runOnUiThread(() -> tvStatus.setText("Error occured:" + ex.getMessage()));
-        //            }
-        //        }).start();
+
     }
 }
