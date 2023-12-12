@@ -20,12 +20,10 @@ public class ApiDataReader {
         InputStream apiContentStream = null;
         ArrayList<String> resultList = new ArrayList<>();
         try {
-            switch (apiCode) {
-                case NAMES_URL:
-                    apiContentStream = downloadUrlContent(NAMES_URL);
+            if(apiCode.contains(NAMES_URL))
+            {
+                    apiContentStream = downloadUrlContent(apiCode);
                     resultList = NamesJsonParser.getNamesInfo(apiContentStream);
-                    break;
-                default:
             }
         }
         finally {

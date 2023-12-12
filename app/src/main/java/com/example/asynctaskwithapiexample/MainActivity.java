@@ -1,7 +1,6 @@
 package com.example.asynctaskwithapiexample;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.media3.common.util.Log;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -49,13 +48,13 @@ public class MainActivity extends AppCompatActivity {
         String nameFilter = filterName.getText().toString();
 
 
-
-        if(this.swUseAsyncTask.isChecked()){
-            getDataByAsyncTask();
+       if(this.swUseAsyncTask.isChecked()){
+           getDataByAsyncTask();
             Toast.makeText(this, R.string.msg_using_async_task, Toast.LENGTH_LONG).show();
-        }
-        else{
-            getDataByThread();
+       }
+       else
+        {
+            getDataByThread(nameFilter);
             Toast.makeText(this, R.string.msg_using_thread, Toast.LENGTH_LONG).show();
         }
     }
@@ -70,13 +69,14 @@ public class MainActivity extends AppCompatActivity {
         }.execute(Constants.NAMES_URL);
     }
 
-    public void getDataByThread() {
+    public void getDataByThread(String nameFilter) {
         this.tvStatus.setText(R.string.loading_data);
         Runnable getDataAndDisplayRunnable = new Runnable() {
             @Override
             public void run() {
                 try {
-                    final ArrayList<String> result = ApiDataReader.getValuesFromApi(Constants.NAMES_URL);
+                    String test = (String.format("%s%s",Constants.NAMES_URL, nameFilter));
+                    final ArrayList<String> result = ApiDataReader.getValuesFromApi(String.format("%s%s",Constants.NAMES_URL, nameFilter));
                     Runnable updateUIRunnable = new Runnable() {
                         @Override
                         public void run() {
